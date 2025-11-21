@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Overwatch Homepage{% endblock %}
+
+{% block body %}
+<div class="min-h-screen" style="background: linear-gradient(to right, rgb(139, 161, 183), rgb(96, 125, 154), rgb(76, 101, 126));">
+    
+    <nav class="flex items-center justify-between p-6 bg-black bg-opacity-20">
+        <div class="flex items-center gap-4">
+            <img src="{{ asset('images/logo.png') }}" alt="Logo" style="height: 50px; width: auto;">
+        </div>
+        <div class="flex gap-6">
+            <a href="#" class="text-white hover:text-blue-200 font-semibold transition">HEROES</a>
+            <a href="#" class="text-white hover:text-blue-200 font-semibold transition">PLAY</a>
+            <a href="#" class="text-white hover:text-blue-200 font-semibold transition">WATCH</a>
+            <a href="#" class="text-white hover:text-blue-200 font-semibold transition">ESPORTS</a>
+        </div>
+    </nav>
+
+    <div class="flex flex-col items-center justify-center text-center py-32 px-4">
+        <h1 class="text-7xl font-black text-white mb-6 drop-shadow-2xl">
+            RALLY YOUR TEAM
+        </h1>
+        <p class="text-2xl text-white mb-12 max-w-2xl drop-shadow-lg">
+            Team up with friends and dive into the ultimate hero shooter experience
+        </p>
+        <div class="flex gap-4">
+            <button class="px-8 py-4 rounded-lg font-bold text-xl transition transform hover:scale-105 shadow-xl text-white" 
+                    style="background: linear-gradient(to right, rgb(59, 130, 246), rgb(37, 99, 235));">
+                PLAY FREE NOW
+            </button>
+            <button class="bg-transparent border-4 border-white text-white px-8 py-4 rounded-lg font-bold text-xl hover:bg-white hover:text-blue-600 transition transform hover:scale-105">
+                WATCH TRAILER
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
