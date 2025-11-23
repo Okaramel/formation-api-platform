@@ -1,67 +1,77 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tous les articles - InkDrop{% endblock %}
+{% block title %}Tous les articles - InkDrop
+{% endblock %}
 
 {% block body %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="py-12">
-        <h1 class="text-4xl font-bold text-gray-900 mb-4">Tous les articles</h1>
-        <p class="text-lg text-gray-600 mb-12">Découvrez tous nos articles et trouvez l'inspiration</p>
-
-        {% if articles|length > 0 %}
-        <div class="grid gap-8 lg:grid-cols-2">
-            {% for article in articles %}
-            <article class="flex flex-col md:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
-                <div class="flex-shrink-0 md:w-48">
-                    <div class="h-48 md:h-full w-full bg-gradient-to-br from-cyan-900 to-cyan-500 flex items-center justify-center">
-                    </div>
-                </div>
-                <div class="flex-1 p-6 flex flex-col justify-between">
-                    <div class="flex-1">
-                        <a href="{{ path('app_article_show', {id: article.id}) }}" class="block">
-                            <h3 class="text-2xl font-bold text-gray-900 hover:text-indigo-600 mb-2">
-                                {{ article.title }}
-                            </h3>
-                            <p class="text-gray-600 line-clamp-2">
-                                {{ article.content|slice(0, 200) }}{% if article.content|length > 200 %}...{% endif %}
-                            </p>
-                        </a>
-                    </div>
-                    <div class="mt-4 flex items-center justify-between">
-                        <div class="flex items-center">
-                            <div class="h-8 w-8 rounded-full bg-cyan-900 flex items-center justify-center text-white text-sm font-bold">
-                                {{ article.userId.firstname|slice(0, 1)|upper }}{{ article.userId.lastname|slice(0, 1)|upper }}
-                            </div>
-                            <div class="ml-2">
-                                <p class="text-sm font-medium text-gray-900">
-                                    {{ article.userId.firstname }} {{ article.userId.lastname }}
-                                </p>
-                            </div>
-                        </div>
-                        <time class="text-sm text-gray-500" datetime="{{ article.createdAt|date('Y-m-d') }}">
-                            {{ article.createdAt|date('d M Y') }}
-                        </time>
-                    </div>
-                </div>
-            </article>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="text-center py-20">
-            <div class="text-gray-400 mb-6">
-                <svg class="mx-auto h-24 w-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-            </div>
-            <h3 class="text-xl font-medium text-gray-900 mb-2">Aucun article</h3>
-            <p class="text-gray-500 mb-6">Aucun article n'a encore été publié. Soyez le premier!</p>
-            {% if app.user %}
-            <a href="/api" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
-                Créer mon premier article
-            </a>
-            {% endif %}
-        </div>
-        {% endif %}
-    </div>
-</div>
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+		<div class="flex flex-col gap-8 py-12">
+			<h1 class="text-4xl font-bold text-gray-900 mb-4">Tous les articles</h1>
+			<p class="text-lg text-gray-600 mb-12">Découvrez tous nos articles et trouvez l'inspiration</p>
+			{% if is_granted('ROLE_USER') %}
+				<a href="{{ path('app_article_create') }}" class="inline-flex w-[15%] items-center px-4 py-2 border border-transparent font-medium rounded-md text-white bg-cyan-700 hover:bg-cyan-900">
+					<svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+					</svg>
+					Créer un article
+				</a>
+			{% endif %}
+			{% if articles|length > 0 %}
+				<div class="grid gap-8 lg:grid-cols-2">
+					{% for article in articles %}
+						<article class="flex flex-col md:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+							<div class="flex-shrink-0 md:w-48">
+								<div class="h-48 md:h-full w-full bg-gradient-to-br from-cyan-900 to-cyan-500 flex items-center justify-center"></div>
+							</div>
+							<div class="flex-1 p-6 flex flex-col justify-between">
+								<div class="flex-1">
+									<a href="{{ path('app_article_show', {id: article.id}) }}" class="block">
+										<h3 class="text-2xl font-bold text-gray-900 hover:text-indigo-600 mb-2">
+											{{ article.title }}
+										</h3>
+										<p class="text-gray-600 line-clamp-2">
+											{{ article.content|slice(0, 200) }}
+											{% if article.content|length > 200 %}...
+											{% endif %}
+										</p>
+									</a>
+								</div>
+								<div class="mt-4 flex items-center justify-between">
+									<div class="flex items-center">
+										<div class="h-8 w-8 rounded-full bg-cyan-900 flex items-center justify-center text-white text-sm font-bold">
+											{{ article.userId.firstname|slice(0, 1)|upper }}{{ article.userId.lastname|slice(0, 1)|upper }}
+										</div>
+										<div class="ml-2">
+											<p class="text-sm font-medium text-gray-900">
+												{{ article.userId.firstname }}
+												{{ article.userId.lastname }}
+											</p>
+										</div>
+									</div>
+									<time class="text-sm text-gray-500" datetime="{{ article.createdAt|date('Y-m-d') }}">
+										{{ article.createdAt|date('d M Y') }}
+									</time>
+								</div>
+							</div>
+						</article>
+					{% endfor %}
+				</div>
+			{% else %}
+				<div class="text-center py-20">
+					<div class="text-gray-400 mb-6">
+						<svg class="mx-auto h-24 w-24" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+						</svg>
+					</div>
+					<h3 class="text-xl font-medium text-gray-900 mb-2">Aucun article</h3>
+					<p class="text-gray-500 mb-6">Aucun article n'a encore été publié. Soyez le premier!</p>
+					{% if app.user %}
+						<a href="/api" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+							Créer mon premier article
+						</a>
+					{% endif %}
+				</div>
+			{% endif %}
+		</div>
+	</div>
 {% endblock %}

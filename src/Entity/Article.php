@@ -149,6 +149,15 @@ class Article
         return $this->category_id;
     }
 
+    /**
+     * Alias pour getCategoryId() pour compatibilité avec les templates Twig
+     * @return Collection<int, Category>
+     */
+    public function getCategories(): Collection
+    {
+        return $this->getCategoryId();
+    }
+
     public function addCategoryId(Category $categoryId): static
     {
         if (!$this->category_id->contains($categoryId)) {

@@ -1,0 +1,154 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration - InkDrop
+{% endblock %}
+
+{% block body %}
+	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+		<div class="bg-white shadow-lg rounded-lg p-8">
+			<h1 class="text-3xl font-bold text-gray-900 mb-8">Administration des articles</h1>
+
+			{# Barre de recherche #}
+			<form method="GET" action="{{ path('app_admin') }}" class="mb-8">
+				<div class="flex gap-4">
+					<input type="text" name="search" value="{{ search }}" placeholder="Rechercher un article par titre ou contenu..." class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">
+					<button type="submit" class="inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-md text-white bg-cyan-700 hover:bg-cyan-900">
+						Rechercher
+					</button>
+					{% if search %}
+						<a href="{{ path('app_admin') }}" class="inline-flex items-center px-6 py-2 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+							Réinitialiser
+						</a>
+					{% endif %}
+				</div>
+			</form>
+
+			{# Liste des articles #}
+			{% if articles|length > 0 %}
+				<div class="overflow-x-auto">
+					<table class="min-w-full divide-y divide-gray-200">
+						<thead class="bg-gray-50">
+							<tr>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auteur</th>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date de création</th>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+							</tr>
+						</thead>
+						<tbody class="bg-white divide-y divide-gray-200">
+							{% for article in articles %}
+								<tr>
+									<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ article.id }}</td>
+									<td class="px-6 py-4 text-sm font-medium text-gray-900">
+										<a href="{{ path('app_article_show', {id: article.id}) }}" class="hover:text-indigo-600">
+											{{ article.Title }}
+										</a>
+									</td>
+									<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+										{{ article.userId.firstname }}
+										{{ article.userId.lastname }}
+									</td>
+									<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+										{{ article.createdAt|date('d/m/Y H:i') }}
+									</td>
+									<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+										<a href="{{ path('app_article_edit', {id: article.id}) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">
+											Modifier
+										</a>
+										<form method="POST" action="{{ path('app_article_delete', {id: article.id}) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
+											<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ article.id) }}">
+											<button type="submit" class="text-red-600 hover:text-red-900">
+												Supprimer
+											</button>
+										</form>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% else %}
+				<div class="text-center py-12">
+					<p class="text-gray-500 text-lg">
+						{% if search %}
+							Aucun article trouvé pour "{{ search }}"
+						{% else %}
+							Aucun article disponible
+						{% endif %}
+					</p>
+				</div>
+			{% endif %}
+		</div>
+		{# Section Catégories #}
+		<div class="bg-white shadow-lg rounded-lg p-8">
+			<h1 class="text-3xl font-bold text-gray-900 mb-8">Administration des catégories</h1>
+
+			{# Barre de recherche Catégories #}
+			<form method="GET" action="{{ path('app_admin') }}" class="mb-8">
+				<div class="flex gap-4">
+					<input type="text" name="category_search" value="{{ category_search }}" placeholder="Rechercher une catégorie par titre..." class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-4 py-2">
+					<button type="submit" class="inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-md text-white bg-cyan-700 hover:bg-cyan-900">
+						Rechercher
+					</button>
+					{% if category_search %}
+						<a href="{{ path('app_admin') }}" class="inline-flex items-center px-6 py-2 border border-gray-300 text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+							Réinitialiser
+						</a>
+					{% endif %}
+				</div>
+			</form>
+
+			{# Liste des catégories #}
+			{% if categories|length > 0 %}
+				<div class="overflow-x-auto">
+					<table class="min-w-full divide-y divide-gray-200">
+						<thead class="bg-gray-50">
+							<tr>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Titre</th>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nombre d'articles</th>
+								<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+							</tr>
+						</thead>
+						<tbody class="bg-white divide-y divide-gray-200">
+							{% for category in categories %}
+								<tr>
+									<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ category.id }}</td>
+									<td class="px-6 py-4 text-sm font-medium text-gray-900">
+										<a href="{{ path('app_category_show', {id: category.id}) }}" class="hover:text-indigo-600">
+											{{ category.title }}
+										</a>
+									</td>
+									<td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+										{{ category.articleId|length }}
+									</td>
+									<td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+										<a href="{{ path('app_category_edit', {id: category.id}) }}" class="text-indigo-600 hover:text-indigo-900 mr-4">
+											Modifier
+										</a>
+										<form method="POST" action="{{ path('app_category_delete', {id: category.id}) }}" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+											<input type="hidden" name="_token" value="{{ csrf_token('delete_category' ~ category.id) }}">
+											<button type="submit" class="text-red-600 hover:text-red-900">
+												Supprimer
+											</button>
+										</form>
+									</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			{% else %}
+				<div class="text-center py-12">
+					<p class="text-gray-500 text-lg">
+						{% if category_search %}
+							Aucune catégorie trouvée pour "{{ category_search }}"
+						{% else %}
+							Aucune catégorie disponible
+						{% endif %}
+					</p>
+				</div>
+			{% endif %}
+		</div>
+	{% endblock %}
