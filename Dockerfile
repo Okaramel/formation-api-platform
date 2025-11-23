@@ -31,8 +31,15 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Install dependencies
-RUN composer install --no-interaction --optimize-autoloader
+# Fix git ownership issue
+RUN git config --global --add safe.directory /var/www/html
+
+# Install dependencies without scripts (database not available during build)
+RUN composer install --no-interaction --optimize-autoloader --no-scripts
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # Set permissions
 RUN mkdir -p /var/www/html/var /var/www/html/public/uploads \
@@ -41,4 +48,5 @@ RUN mkdir -p /var/www/html/var /var/www/html/public/uploads \
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
+ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
 CMD ["php-fpm"]

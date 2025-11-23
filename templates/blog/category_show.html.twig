@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ category.title }} - InkDrop{% endblock %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="py-12">
+        <div class="mb-8">
+            <a href="{{ path('app_categories') }}"
+               class="inline-flex items-center text-indigo-600 hover:text-indigo-500 font-medium mb-4">
+                <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Retour aux catégories
+            </a>
+            <h1 class="text-4xl font-bold text-gray-900 mb-2">{{ category.title }}</h1>
+            <p class="text-lg text-gray-600">{{ category.articleId|length }} article{{ category.articleId|length > 1 ? 's' : '' }} dans cette catégorie</p>
+        </div>
+
+        {% if category.articleId|length > 0 %}
+        <div class="grid gap-8 lg:grid-cols-2">
+            {% for article in category.articleId %}
+            <article class="flex flex-col md:flex-row bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="flex-shrink-0 md:w-48">
+                    <div class="h-48 md:h-full w-full bg-gradient-to-br from-indigo-400 to-purple-600 flex items-center justify-center">
+                        <span class="text-white text-5xl">📝</span>
+                    </div>
+                </div>
+                <div class="flex-1 p-6 flex flex-col justify-between">
+                    <div class="flex-1">
+                        <a href="{{ path('app_article_show', {id: article.id}) }}" class="block">
+                            <h3 class="text-2xl font-bold text-gray-900 hover:text-indigo-600 mb-2">
+                                {{ article.title }}
+                            </h3>
+                            <p class="text-gray-600 line-clamp-2">
+                                {{ article.content|slice(0, 150) }}{% if article.content|length > 150 %}...{% endif %}
+                            </p>
+                        </a>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="h-8 w-8 rounded-full bg-indigo-600 flex items-center justify-center text-white text-sm font-bold">
+                                {{ article.userId.firstname|slice(0, 1)|upper }}{{ article.userId.lastname|slice(0, 1)|upper }}
+                            </div>
+                            <div class="ml-2">
+                                <p class="text-sm font-medium text-gray-900">
+                                    {{ article.userId.firstname }} {{ article.userId.lastname }}
+                                </p>
+                            </div>
+                        </div>
+                        <time class="text-sm text-gray-500" datetime="{{ article.createdAt|date('Y-m-d') }}">
+                            {{ article.createdAt|date('d M Y') }}
+                        </time>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-20">
+            <div class="text-gray-400 mb-6">
+                <svg class="mx-auto h-24 w-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-medium text-gray-900 mb-2">Aucun article</h3>
+            <p class="text-gray-500">Cette catégorie ne contient pas encore d'articles.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

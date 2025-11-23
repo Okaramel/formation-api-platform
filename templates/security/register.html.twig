@@ -1,0 +1,144 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription - InkDrop{% endblock %}
+
+{% block body %}
+<div class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-md w-full space-y-8">
+        <div>
+            <div class="mx-auto h-16 w-16 flex items-center justify-center rounded-full bg-indigo-600">
+                <span class="text-3xl">📝</span>
+            </div>
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Créez votre compte
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600">
+                Ou
+                <a href="{{ path('app_login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    connectez-vous si vous avez déjà un compte
+                </a>
+            </p>
+        </div>
+
+        <div id="registration-form" class="mt-8 space-y-6">
+            <div class="rounded-md shadow-sm -space-y-px">
+                <div>
+                    <label for="firstname" class="sr-only">Prénom</label>
+                    <input id="firstname" name="firstname" type="text" required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                           placeholder="Prénom">
+                </div>
+                <div>
+                    <label for="lastname" class="sr-only">Nom</label>
+                    <input id="lastname" name="lastname" type="text" required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                           placeholder="Nom">
+                </div>
+                <div>
+                    <label for="email" class="sr-only">Adresse email</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                           placeholder="Adresse email">
+                </div>
+                <div>
+                    <label for="password" class="sr-only">Mot de passe</label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" required
+                           class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                           placeholder="Mot de passe (minimum 8 caractères)">
+                </div>
+            </div>
+
+            <div id="error-message" class="hidden rounded-md bg-red-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700" id="error-text"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="success-message" class="hidden rounded-md bg-green-50 p-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-700">Votre compte a été créé avec succès! Redirection vers la page de connexion...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" id="register-btn"
+                        class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+                        </svg>
+                    </span>
+                    S'inscrire
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('register-btn').addEventListener('click', async function(e) {
+    e.preventDefault();
+
+    const errorDiv = document.getElementById('error-message');
+    const successDiv = document.getElementById('success-message');
+    const errorText = document.getElementById('error-text');
+
+    errorDiv.classList.add('hidden');
+    successDiv.classList.add('hidden');
+
+    const firstname = document.getElementById('firstname').value;
+    const lastname = document.getElementById('lastname').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (password.length < 8) {
+        errorText.textContent = 'Le mot de passe doit contenir au moins 8 caractères.';
+        errorDiv.classList.remove('hidden');
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/users', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: email,
+                plainPassword: password,
+                firstname: firstname,
+                lastname: lastname
+            })
+        });
+
+        if (response.ok) {
+            successDiv.classList.remove('hidden');
+            setTimeout(() => {
+                window.location.href = '{{ path('app_login') }}';
+            }, 2000);
+        } else {
+            const data = await response.json();
+            errorText.textContent = data['hydra:description'] || 'Une erreur est survenue lors de l\'inscription.';
+            errorDiv.classList.remove('hidden');
+        }
+    } catch (error) {
+        errorText.textContent = 'Erreur de connexion au serveur. Veuillez réessayer.';
+        errorDiv.classList.remove('hidden');
+    }
+});
+</script>
+{% endblock %}

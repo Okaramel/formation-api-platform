@@ -1,0 +1,131 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }} - InkDrop{% endblock %}
+
+{% block body %}
+<article class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    {# Article Header #}
+    <div class="py-12">
+        <div class="mb-6">
+            <div class="flex items-center gap-2">
+                {% for category in article.categories %}
+                <a href="{{ path('app_category_show', {id: category.id}) }}"
+                   class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 hover:bg-indigo-200">
+                    {{ category.title }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <h1 class="text-5xl font-extrabold text-gray-900 mb-6">
+            {{ article.title }}
+        </h1>
+
+        {# Author Info #}
+        <div class="flex items-center mb-8">
+            <div class="h-12 w-12 rounded-full bg-indigo-600 flex items-center justify-center text-white text-lg font-bold">
+                {{ article.userId.firstname|slice(0, 1)|upper }}{{ article.userId.lastname|slice(0, 1)|upper }}
+            </div>
+            <div class="ml-4">
+                <p class="text-lg font-medium text-gray-900">
+                    {{ article.userId.firstname }} {{ article.userId.lastname }}
+                </p>
+                <div class="flex items-center text-sm text-gray-500">
+                    <time datetime="{{ article.createdAt|date('Y-m-d') }}">
+                        Publié le {{ article.createdAt|date('d M Y') }}
+                    </time>
+                    {% if article.lastUpdatedAt %}
+                    <span class="mx-2">•</span>
+                    <time datetime="{{ article.lastUpdatedAt|date('Y-m-d') }}">
+                        Mis à jour le {{ article.lastUpdatedAt|date('d M Y') }}
+                    </time>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {# Featured Image Placeholder #}
+        <div class="mb-12 rounded-2xl overflow-hidden shadow-lg">
+            <div class="h-96 w-full bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center">
+                <span class="text-white text-9xl">📝</span>
+            </div>
+        </div>
+
+        {# Article Content #}
+        <div class="prose prose-lg max-w-none mb-12">
+            <div class="text-gray-800 leading-relaxed whitespace-pre-line">{{ article.content }}</div>
+        </div>
+
+        {# Article Footer #}
+        <div class="border-t border-gray-200 pt-8">
+            <div class="flex items-center justify-between">
+                <a href="{{ path('app_articles') }}"
+                   class="inline-flex items-center text-indigo-600 hover:text-indigo-500 font-medium">
+                    <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Retour aux articles
+                </a>
+
+                <div class="flex items-center gap-4">
+                    <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                        </svg>
+                        J'aime
+                    </button>
+                    <button class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+                        </svg>
+                        Partager
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</article>
+
+{# Related Articles #}
+{% if relatedArticles|length > 0 %}
+<div class="bg-gray-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-gray-900 mb-8">Articles similaires</h2>
+        <div class="grid gap-6 md:grid-cols-3">
+            {% for relatedArticle in relatedArticles %}
+            {% set colors = ['indigo', 'purple', 'pink', 'blue'] %}
+            {% set emojis = ['📝', '✨', '🎨', '🚀'] %}
+            {% set colorIndex = loop.index0 % 4 %}
+            <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow">
+                <div class="h-40 bg-gradient-to-r from-{{ colors[colorIndex] }}-400 to-{{ colors[(colorIndex + 1) % 4] }}-600 flex items-center justify-center">
+                    <span class="text-white text-5xl">{{ emojis[colorIndex] }}</span>
+                </div>
+                <div class="p-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        {% for category in relatedArticle.categories|slice(0, 2) %}
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                            {{ category.title }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    <a href="{{ path('app_article_show', {id: relatedArticle.id}) }}">
+                        <h3 class="text-lg font-semibold text-gray-900 hover:text-indigo-600 mb-2">
+                            {{ relatedArticle.title }}
+                        </h3>
+                        <p class="text-gray-600 text-sm line-clamp-2">
+                            {{ relatedArticle.content|slice(0, 100) }}...
+                        </p>
+                    </a>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <time datetime="{{ relatedArticle.createdAt|date('Y-m-d') }}">
+                            {{ relatedArticle.createdAt|date('d M Y') }}
+                        </time>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
