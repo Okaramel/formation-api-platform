@@ -3,47 +3,82 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Patch;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\ArticleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(security: "is_granted('ROLE_USER')"),
+        new Get(),
+        new Put(security: "is_granted('ROLE_ADMIN') or object.user_id == user"),
+        new Patch(security: "is_granted('ROLE_ADMIN') or object.user_id == user"),
+        new Delete(security: "is_granted('ROLE_ADMIN') or object.user_id == user"),
+    ],
+    normalizationContext: ['groups' => ['read']],
+    denormalizationContext: ['groups' => ['write']],
+)]
 class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank()]
+    #[Groups(['read', 'write'])]
     private ?string $Title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank()]
+    #[Groups(['read', 'write'])]
     private ?string $content = null;
 
     #[ORM\Column]
+    #[Groups(['read'])]
     private ?\DateTimeImmutable $created_at = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read'])]
     private ?\DateTimeImmutable $last_updated_at = null;
 
     /**
      * @var Collection<int, Category>
      */
     #[ORM\ManyToMany(targetEntity: Category::class, inversedBy: 'article_id')]
+    #[Groups(['read', 'write'])]
     private Collection $category_id;
 
     #[ORM\ManyToOne(inversedBy: 'articles_id')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['read', 'write'])]
     private ?User $user_id = null;
 
     public function __construct()
     {
         $this->category_id = new ArrayCollection();
+        $this->created_at = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function updateLastUpdatedAt(): void
+    {
+        $this->last_updated_at = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
