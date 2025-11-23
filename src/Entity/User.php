@@ -81,6 +81,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank()]
     private ?string $lastname = null;
 
+    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
+    #[Groups(['read', 'write'])]
+    private ?OverAccount $overAccount = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -194,6 +198,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setLastname(string $lastname): static
     {
         $this->lastname = $lastname;
+
+        return $this;
+    }
+
+    public function getOverAccount(): ?OverAccount
+    {
+        return $this->overAccount;
+    }
+
+    public function setOverAccount(?OverAccount $overAccount): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($overAccount === null && $this->overAccount !== null) {
+            $this->overAccount->setUser(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($overAccount !== null && $overAccount->getUser() !== $this) {
+            $overAccount->setUser($this);
+        }
+
+        $this->overAccount = $overAccount;
 
         return $this;
     }
