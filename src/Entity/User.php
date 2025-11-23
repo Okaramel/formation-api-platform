@@ -11,6 +11,8 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\UserRepository;
 use App\State\UserPasswordHasherProcessor;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -81,9 +83,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\NotBlank()]
     private ?string $lastname = null;
 
-    #[ORM\OneToOne(mappedBy: 'user', cascade: ['persist', 'remove'])]
-    #[Groups(['read', 'write'])]
-    private ?OverAccount $overAccount = null;
+
+
+    /**
+     * @var Collection<int, Article>
+     */
+    #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'user_id')]
+    private Collection $articles_id;
+
+    public function __construct()
+    {
+        $this->articles_id = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -202,24 +213,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getOverAccount(): ?OverAccount
+
+    /**
+     * @return Collection<int, Article>
+     */
+    public function getArticlesId(): Collection
     {
-        return $this->overAccount;
+        return $this->articles_id;
     }
 
-    public function setOverAccount(?OverAccount $overAccount): static
+    public function addArticlesId(Article $articlesId): static
     {
-        // unset the owning side of the relation if necessary
-        if ($overAccount === null && $this->overAccount !== null) {
-            $this->overAccount->setUser(null);
+        if (!$this->articles_id->contains($articlesId)) {
+            $this->articles_id->add($articlesId);
+            $articlesId->setUserId($this);
         }
 
-        // set the owning side of the relation if necessary
-        if ($overAccount !== null && $overAccount->getUser() !== $this) {
-            $overAccount->setUser($this);
-        }
+        return $this;
+    }
 
-        $this->overAccount = $overAccount;
+    public function removeArticlesId(Article $articlesId): static
+    {
+        if ($this->articles_id->removeElement($articlesId)) {
+            // set the owning side to null (unless already changed)
+            if ($articlesId->getUserId() === $this) {
+                $articlesId->setUserId(null);
+            }
+        }
 
         return $this;
     }

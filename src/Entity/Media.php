@@ -65,9 +65,6 @@ class Media
     #[Groups(['read'])]
     private ?string $filePath = null;
 
-    #[ORM\OneToOne(inversedBy: 'media', cascade: ['persist', 'remove'])]
-    #[Groups(['read'])]
-    private ?Product $product = null;
 
     #[ApiProperty(types: ['https://schema.org/contentUrl'])]
     #[Groups(['read'])]
@@ -94,17 +91,6 @@ class Media
         return $this;
     }
 
-    public function getProduct(): ?Product
-    {
-        return $this->product;
-    }
-
-    public function setProduct(?Product $product): static
-    {
-        $this->product = $product;
-
-        return $this;
-    }
 
     public function getContentUrl(): ?string
     {

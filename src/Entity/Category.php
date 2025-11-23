@@ -35,15 +35,17 @@ class Category
     #[Assert\NotBlank()]
     private ?string $title = null;
 
+
     /**
-     * @var Collection<int, Product>
+     * @var Collection<int, Article>
      */
-    #[ORM\OneToMany(targetEntity: Product::class, mappedBy: 'category')]
-    private Collection $products;
+    #[ORM\ManyToMany(targetEntity: Article::class, mappedBy: 'category_id')]
+    private Collection $article_id;
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+
+        $this->article_id = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -63,31 +65,30 @@ class Category
         return $this;
     }
 
+    
+
     /**
-     * @return Collection<int, Product>
+     * @return Collection<int, Article>
      */
-    public function getProducts(): Collection
+    public function getArticleId(): Collection
     {
-        return $this->products;
+        return $this->article_id;
     }
 
-    public function addProduct(Product $product): static
+    public function addArticleId(Article $articleId): static
     {
-        if (!$this->products->contains($product)) {
-            $this->products->add($product);
-            $product->setCategory($this);
+        if (!$this->article_id->contains($articleId)) {
+            $this->article_id->add($articleId);
+            $articleId->addCategoryId($this);
         }
 
         return $this;
     }
 
-    public function removeProduct(Product $product): static
+    public function removeArticleId(Article $articleId): static
     {
-        if ($this->products->removeElement($product)) {
-            // set the owning side to null (unless already changed)
-            if ($product->getCategory() === $this) {
-                $product->setCategory(null);
-            }
+        if ($this->article_id->removeElement($articleId)) {
+            $articleId->removeCategoryId($this);
         }
 
         return $this;
